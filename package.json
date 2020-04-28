@@ -1,0 +1,27 @@
+{
+  "name": "grammar-parsing-tree",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": "git@github.com:MarioJim/grammar-parsing-tree.git",
+  "author": "MarioJim <mario.emilio.j@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "develop": "webpack-dev-server --color --progress --config webpack.dev.js",
+    "build": "webpack --color --progress --config webpack.prod.js",
+    "start": "yarn build && node server.js"
+  },
+  "dependencies": {
+    "@types/d3": "^5.7.2",
+    "d3": "^5.16.0",
+    "express": "^4.17.1",
+    "ts-loader": "^7.0.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-merge": "^4.2.2"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.10.3"
+  }
+}
