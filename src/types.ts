@@ -4,5 +4,9 @@ export interface Symbol {
 }
 
 export interface GrammarStructure {
-  [key: string]: string[][]
+  startingSymbol: string
+  nonTerminalSymbols: {
+    [key: string]: string[]
+  }
+  terminalSymbols: string[]
 }

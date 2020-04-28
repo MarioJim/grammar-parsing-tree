@@ -1,4 +1,5 @@
 import { GrammarStructure, Symbol } from './types';
+import { parseFile } from './grammar_parsing';
 
 declare global {
   interface Window {
@@ -48,5 +49,5 @@ const addDropListener = () => {
  * @param file 
  */
 const recievedFile = (file: string) => {
-  console.log(file);
+  parseFile(file);
 };
