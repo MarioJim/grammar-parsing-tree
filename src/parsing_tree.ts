@@ -1,14 +1,7 @@
 import * as d3 from 'd3';
-import { Symbol } from './types';
+import { Symbol, isTerminalSymbol } from './types';
 
 const width = 600, height = 500, margin = 50;
-
-/**
- * Checks if a symbol its terminal
- * @param symbolName the name of the symbol
- */
-const isTerminalSymbol = (symbolName: string): boolean =>
-  window.grammarStructure.terminalSymbols.includes(symbolName);
 
 /**
  * Creates a path between point A and point B

@@ -10,3 +10,10 @@ export interface GrammarStructure {
   }
   terminalSymbols: string[]
 }
+
+/**
+ * Checks if a symbol its terminal
+ * @param symbolName the name of the symbol
+ */
+export const isTerminalSymbol = (symbolName: string): boolean =>
+  window.grammarStructure.terminalSymbols.includes(symbolName);

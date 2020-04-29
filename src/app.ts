@@ -1,4 +1,4 @@
-import { GrammarStructure, Symbol } from './types';
+import { GrammarStructure, isTerminalSymbol, Symbol } from './types';
 import { parseFile } from './grammar_parsing';
 import { setupTree } from './parsing_tree';
 
@@ -46,11 +46,27 @@ const addDropListener = () => {
 };
 
 /**
+ * Reveals the text field and adds its on input callback
+ * to filter characters that aren't terminal symbols
+ */
+const setupTextField = () => {
+  const textField = document.getElementById('textField') as HTMLInputElement;
+  textField.value = '';
+  textField.style.display = 'block';
+  textField.oninput = () => {
+    textField.value = textField.value
+      .split('')
+      .filter(char => isTerminalSymbol(char))
+      .join('');
+  };
+};
+/**
  * Processes the recieved file
  * @param file 
  */
 const recievedFile = (file: string) => {
   parseFile(file);
+  setupTextField();
   // Add hardcoded tree for d3 tests
   window.parsingTree = {
     name: 'S',
