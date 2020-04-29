@@ -1,5 +1,6 @@
 import { GrammarStructure, Symbol } from './types';
 import { parseFile } from './grammar_parsing';
+import { setupTree } from './parsing_tree';
 
 declare global {
   interface Window {
@@ -50,4 +51,46 @@ const addDropListener = () => {
  */
 const recievedFile = (file: string) => {
   parseFile(file);
+  // Add hardcoded tree for d3 tests
+  window.parsingTree = {
+    name: 'S',
+    children: [
+      {
+        name: 'A',
+        children: [
+          {
+            name: 'a',
+          },
+        ],
+      },
+      {
+        name: 'b',
+      },
+      {
+        name: 'B',
+        children: [
+          {
+            name: 'A',
+            children: [
+              {
+                name: 'a',
+              },
+            ],
+          },
+          {
+            name: 'a',
+          },
+          {
+            name: 'A',
+            children: [
+              {
+                name: 'a',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  }
+  setupTree();
 };
