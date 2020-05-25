@@ -1,19 +1,21 @@
-import { GrammarStructure, isTerminalSymbol, Symbol } from './types';
+import parser from './parser';
 import { parseFile } from './grammar_parsing';
+import setupInputs from './input_fields';
 import { setupTree } from './parsing_tree';
+import { GrammarStructure, Point, Symbol } from './types';
 
 declare global {
   interface Window {
     grammarStructure: GrammarStructure
     parsingTree: Symbol
+    oldSourcePoint: Point
   }
 }
 
 // When document is ready, call add_drop_listener
 document.addEventListener('readystatechange', () => {
-  if (document.readyState === 'interactive') {
+  if (document.readyState === 'interactive')
     addDropListener();
-  }
 });
 
 const ignoreEvent = (event: DragEvent) => {
@@ -46,67 +48,63 @@ const addDropListener = () => {
 };
 
 /**
- * Reveals the text field and adds its on input callback
- * to filter characters that aren't terminal symbols
- */
-const setupTextField = () => {
-  const textField = document.getElementById('textField') as HTMLInputElement;
-  textField.value = '';
-  textField.style.display = 'block';
-  textField.oninput = () => {
-    textField.value = textField.value
-      .split('')
-      .filter(char => isTerminalSymbol(char))
-      .join('');
-  };
-};
-/**
  * Processes the recieved file
  * @param file 
  */
 const recievedFile = (file: string) => {
+  console.log(file);
   parseFile(file);
-  setupTextField();
+  setupInputs(parser);
   // Add hardcoded tree for d3 tests
   window.parsingTree = {
     name: 'S',
+    id: 0,
     children: [
       {
         name: 'A',
+        id: 1,
         children: [
           {
             name: 'a',
+            id: 2,
           },
         ],
       },
       {
         name: 'b',
+        id: 3,
       },
       {
         name: 'B',
+        id: 4,
         children: [
           {
             name: 'A',
+            id: 5,
             children: [
               {
                 name: 'a',
+                id: 6,
               },
             ],
           },
           {
             name: 'a',
+            id: 7,
           },
           {
             name: 'A',
+            id: 8,
             children: [
               {
                 name: 'a',
+                id: 9,
               },
             ],
           },
         ],
       },
     ],
-  }
+  };
   setupTree();
 };

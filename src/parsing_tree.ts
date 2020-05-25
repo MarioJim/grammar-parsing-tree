@@ -1,17 +1,16 @@
 import * as d3 from 'd3';
-import { Symbol, isTerminalSymbol } from './types';
+import { isTerminalSymbol, Point, Symbol } from './types';
 
 const width = 600, height = 500, margin = 50;
+const transitionDuration = 750;
+const circleSize = 18;
 
 /**
  * Creates a path between point A and point B
  * @param pointA starting point of the path
  * @param pointB ending point of the path
  */
-const generateLinkPath = (
-  pointA: d3.HierarchyPointNode<Symbol>,
-  pointB: d3.HierarchyPointNode<Symbol>
-): string => `
+const generateLinkPath = (pointA: Point, pointB: Point): string => `
     M${pointA.x},${height - pointA.y}
     C${pointA.x},${height - (pointA.y + pointB.y) / 2}
      ${pointB.x},${height - (pointA.y + pointB.y) / 2}
@@ -23,54 +22,107 @@ const generateLinkPath = (
  */
 export const setupTree = () => {
   // Clear title
-  const page = d3.select('#page');
-  page.select('h1').remove();
-  page.style('display', 'block');
+  d3.select('#page').select('h1').remove();
 
-  // Select pane title
-  page.select('.paneTitle').style('display', 'block');
-
-  // Select SVG
-  const svg = page.select('#svgPane')
+  // Select SVG and lear previous trees
+  const svg = d3.select('#svgPane')
     .attr('viewBox', `${-margin} ${-margin} ${width + 2 * margin} ${height + 2 * margin}`)
     .style('display', 'block');
+  svg.select('g.links').selectAll('*').remove();
+  svg.select('g.nodes').selectAll('*').remove();
 
-  // Clear previous trees
-  svg.selectAll('*').remove();
+  // Set initial source circle position
+  window.oldSourcePoint = { x: width / 2, y: 0, };
 
-  // Initial setup and tree layout
+  // Display tree
+  updateTree();
+};
+
+/**
+ * Updates the tree previously rendered by setupTree
+ */
+export const updateTree = () => {
+  const svg = d3.select('#svgPane');
+  const linksGroup = svg.select('g.links');
+  const nodesGroup = svg.select('g.nodes');
+
+  // Recalculate tree layout
   const cluster = d3.cluster<Symbol>().size([width, height]);
   const nodesStructure = d3.hierarchy(window.parsingTree, d => d.children);
-  const nodes = cluster(nodesStructure);
+  const nodesLayout = cluster(nodesStructure);
+  const newSourcePoint = nodesLayout.descendants()[0];
 
-  // Add the link between the nodes
-  const link = svg.selectAll('.link')
-    .data(nodes.descendants().slice(1))
-    .enter()
-    .append('path')
-    .attr('class', 'link')
-    .attr('fill', 'none')
-    .attr('stroke', '#ccc')
-    .attr('stroke-width', '2px')
-    .attr('d', d => generateLinkPath(d, d.parent));
+  /**
+   * Nodes
+   */
+  const nodes = nodesGroup.selectAll<SVGGElement, any>('g.node')
+    .data(nodesLayout.descendants(), d => d.data.id);
 
-  // Add the nodes as circles
-  const node = svg.selectAll('.node')
-    .data(nodes.descendants())
-    .enter()
+  // Selects the new nodes (that don't have an svg element tied to them)
+  const newNodes = nodes.enter()
     .append('g')
-    .attr('transform', d => `translate(${d.x},${height - d.y})`);
+    .attr('class', 'node')
+    .attr('transform',
+      `translate(${window.oldSourcePoint.x},${height - window.oldSourcePoint.y}) scale(0)`
+    );
 
   // Creates a circle where the node is supposed to be
-  node.append('circle')
-    .attr('r', 18)
+  newNodes.append('circle')
+    .attr('r', circleSize)
     .attr('fill', 'white')
     .attr('stroke-width', 3)
     .attr('stroke', d => isTerminalSymbol(d.data.name) ? 'steelblue' : 'green');
 
   // Adds the symbol name to the node
-  node.append('text')
+  newNodes.append('text')
     .attr('dy', 5)
     .style('text-anchor', 'middle')
     .text(d => d.data.name);
+
+  // Select the nodes that need to stay and transition them to their new position
+  newNodes.merge(nodes)
+    .transition()
+    .duration(transitionDuration)
+    .attr('transform', d => `translate(${d.x},${height - d.y}) scale(1)`);
+
+  // Select the nodes that need to be removed and delete them after an animation
+  nodes.exit()
+    .transition()
+    .duration(transitionDuration)
+    .attr('transform', `translate(${newSourcePoint.x},${height - newSourcePoint.y}) scale(0)`)
+    .remove();
+
+  /**
+   * Links
+   */
+  const links = linksGroup.selectAll<SVGPathElement, any>('path.link')
+    .data(nodesLayout.descendants().slice(1), d => d.data.id);
+
+  // Select the new links and draw them
+  const newLinks = links.enter()
+    .append('path')
+    .attr('class', 'link')
+    .attr('fill', 'none')
+    .attr('stroke', '#BBB')
+    .attr('stroke-width', 2)
+    .attr('d', generateLinkPath(window.oldSourcePoint, window.oldSourcePoint));
+
+  // Move links to their new position
+  newLinks.merge(links)
+    .transition()
+    .duration(transitionDuration)
+    .attr('d', d => generateLinkPath(d.parent, d));
+
+  // Remove links that have disappeared
+  links.exit()
+    .transition()
+    .duration(transitionDuration)
+    .attr('d', generateLinkPath(newSourcePoint, newSourcePoint))
+    .remove();
+
+  // Update source coords
+  window.oldSourcePoint = {
+    x: newSourcePoint.x,
+    y: newSourcePoint.y
+  };
 };

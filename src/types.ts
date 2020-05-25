@@ -1,5 +1,6 @@
 export interface Symbol {
   name: string
+  id: number
   children?: Symbol[]
 }
 
@@ -9,6 +10,11 @@ export interface GrammarStructure {
     [key: string]: string[]
   }
   terminalSymbols: string[]
+}
+
+export interface Point {
+  x: number
+  y: number
 }
 
 /**
