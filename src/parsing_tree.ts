@@ -27,10 +27,7 @@ export const setupTree = () => {
     children: [],
   };
 
-  // Clear title
-  d3.select('#page').select('h1').remove();
-
-  // Select SVG and lear previous trees
+  // Select SVG and clear previous trees
   const svg = d3.select('#svgPane')
     .attr('viewBox', `${-margin} ${-margin} ${width + 2 * margin} ${height + 2 * margin}`)
     .style('display', 'block');

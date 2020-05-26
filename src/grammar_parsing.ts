@@ -2,7 +2,7 @@
  * Parses the file into grammarStructure, located in window
  * @param file the file to be parsed
  */
-export const parseFile = (file: string) => {
+const parseFile = (file: string) => {
   // Initialize the structure
   window.grammarStructure = {
     startingSymbol: '',
@@ -24,5 +24,6 @@ export const parseFile = (file: string) => {
     const [nonTerminalSymbol, production] = line.split('->');
     window.grammarStructure.nonTerminalSymbols[nonTerminalSymbol].push(production);
   });
-  console.log(window.grammarStructure);
 };
+
+export default parseFile;

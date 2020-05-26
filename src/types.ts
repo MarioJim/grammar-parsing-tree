@@ -1,6 +1,6 @@
 export interface Derivation {
   name: string
-  children?: Derivation[]
+  children: Derivation[]
 }
 
 export interface GrammarStructure {

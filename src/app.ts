@@ -1,5 +1,5 @@
 import parser from './parser';
-import { parseFile } from './grammar_parsing';
+import parseFile from './grammar_parsing';
 import setupInputs from './input_fields';
 import { setupTree } from './parsing_tree';
 import { GrammarStructure, Point, Derivation } from './types';
@@ -52,7 +52,10 @@ const addDropListener = () => {
  * @param file 
  */
 const recievedFile = (file: string) => {
-  console.log(file);
+  // Hide title and show page
+  document.getElementById('title').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+
   parseFile(file);
   setupInputs(parser);
   setupTree();
