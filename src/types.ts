@@ -1,7 +1,6 @@
-export interface Symbol {
+export interface Derivation {
   name: string
-  id: number
-  children?: Symbol[]
+  children?: Derivation[]
 }
 
 export interface GrammarStructure {
@@ -22,4 +21,4 @@ export interface Point {
  * @param symbolName the name of the symbol
  */
 export const isTerminalSymbol = (symbolName: string): boolean =>
-  window.grammarStructure.terminalSymbols.includes(symbolName);
+  symbolName.split('').every(char => window.grammarStructure.terminalSymbols.includes(char));

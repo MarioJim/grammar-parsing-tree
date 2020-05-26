@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
-import { isTerminalSymbol, Point, Symbol } from './types';
+import { isTerminalSymbol, Point, Derivation } from './types';
 
 const width = 600, height = 500, margin = 50;
-const transitionDuration = 750;
+const transitionDuration = 700;
 const circleSize = 18;
 
 /**
@@ -21,6 +21,12 @@ const generateLinkPath = (pointA: Point, pointB: Point): string => `
  * svgPane on a element with id page
  */
 export const setupTree = () => {
+  // Initialize tree
+  window.parsingTree = {
+    name: window.grammarStructure.startingSymbol,
+    children: [],
+  };
+
   // Clear title
   d3.select('#page').select('h1').remove();
 
@@ -47,16 +53,16 @@ export const updateTree = () => {
   const nodesGroup = svg.select('g.nodes');
 
   // Recalculate tree layout
-  const cluster = d3.cluster<Symbol>().size([width, height]);
+  const treemap = d3.tree<Derivation>().size([width, height]);
   const nodesStructure = d3.hierarchy(window.parsingTree, d => d.children);
-  const nodesLayout = cluster(nodesStructure);
+  const nodesLayout = treemap(nodesStructure);
   const newSourcePoint = nodesLayout.descendants()[0];
 
   /**
    * Nodes
    */
   const nodes = nodesGroup.selectAll<SVGGElement, any>('g.node')
-    .data(nodesLayout.descendants(), d => d.data.id);
+    .data(nodesLayout.descendants(), d => d.data.name);
 
   // Selects the new nodes (that don't have an svg element tied to them)
   const newNodes = nodes.enter()
@@ -66,9 +72,10 @@ export const updateTree = () => {
       `translate(${window.oldSourcePoint.x},${height - window.oldSourcePoint.y}) scale(0)`
     );
 
-  // Creates a circle where the node is supposed to be
-  newNodes.append('circle')
-    .attr('r', circleSize)
+  // Creates an ellipse where the node is supposed to be
+  newNodes.append('ellipse')
+    .attr('rx', 2 * circleSize)
+    .attr('ry', circleSize)
     .attr('fill', 'white')
     .attr('stroke-width', 3)
     .attr('stroke', d => isTerminalSymbol(d.data.name) ? 'steelblue' : 'green');
@@ -96,7 +103,7 @@ export const updateTree = () => {
    * Links
    */
   const links = linksGroup.selectAll<SVGPathElement, any>('path.link')
-    .data(nodesLayout.descendants().slice(1), d => d.data.id);
+    .data(nodesLayout.descendants().slice(1), d => d.data.name);
 
   // Select the new links and draw them
   const newLinks = links.enter()

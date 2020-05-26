@@ -1,76 +1,61 @@
-import { updateTree } from "./parsing_tree";
-import { Symbol } from './types';
-
-const getRandomId = () => Math.floor(Math.random() * 100000);
+import { updateTree } from './parsing_tree';
+import { Derivation, isTerminalSymbol } from './types';
 
 const parser = (input: string, depth: number) => {
-  const treeQueue: string[] = [];
-  const treeQueueLevels: number[] = [];
-  const treeQueueSymbols: Symbol[] = [];
-  treeQueue.push(window.grammarStructure.startingSymbol);
-  treeQueueLevels.push(1);
-  
   window.parsingTree = {
     name: window.grammarStructure.startingSymbol,
-    id: getRandomId(),
-    children: []
+    children: [],
   };
 
-  treeQueueSymbols.push(window.parsingTree);
+  const queue: [Derivation, number][] = [];
+  queue.push([window.parsingTree, 1,]);
 
-  let buildString: string  = "";
+  let buildString: string = '';
   let done: boolean = false;
 
-  while (treeQueue.length != 0 && !done) {
-    let q: string = treeQueue.shift();
-    let qLevel: number = treeQueueLevels.shift();
-    let qSymbol: Symbol = treeQueueSymbols.shift();
+  while (queue.length !== 0 && !done) {
+    // Let q = uAv where A is the left most variable in q
+    let [qSymbol, qLevel] = queue.shift();
+    const q = qSymbol.name;
 
+    // Search first non terminal symbol
     let index: number = -1;
-    for (let i=0; i<q.length; i++) {
-      if ((q.charAt(i)>='A') && (q.charAt(i)<='Z')) {
-        index = i;
-        break;
+    do {
+      index++;
+    } while (index < q.length && isTerminalSymbol(q.charAt(index)));
+
+    if (index === q.length) continue;
+
+    window.grammarStructure.nonTerminalSymbols[q.charAt(index)].forEach(production => {
+      // Create new derivation with uAv as uwv and add new derivation to tree
+      const newDerivation: Derivation = {
+        name: q.replace(q.charAt(index), production),
+        children: [],
+      };
+      // Check if p equals uwv
+      if (newDerivation.name === input) {
+        buildString = newDerivation.name;
+        done = true;
+        qSymbol.children.push(newDerivation);
+        return;
       }
-    }
-
-    if (index != -1)
-      window.grammarStructure.nonTerminalSymbols[`${q.charAt(index)}`].forEach(function (value) {
-        let tempString: string = q.replace(`${q.charAt(index)}`, value);
-        let check: boolean = true; 
-
-        // Check if p equals uwv
-        if (tempString == input) {
-          buildString = tempString;
-          done = true;
-        }
-        
-        if (tempString.length > input.length) {
-          check = false;
-        } else {
-          // Check if the prefix of uwv matches the prefix in p
-          for (let i=0; i<tempString.length && i<input.length; i++) {
-            if ((tempString.charAt(i)>='A')&&(tempString.charAt(i)<='Z'))
-              break;
-
-            if (tempString.charAt(i) != input.charAt(i))
-              check = false;
-          }
-        }
-
-        if (check && qLevel+1<=depth) {
-          treeQueue.push(tempString);
-          treeQueueLevels.push(qLevel+1);
-          qSymbol.children.push({name:tempString, id:getRandomId(), children: []});
-          treeQueueSymbols.push(qSymbol.children[qSymbol.children.length-1]);
-        }
-      }); 
+      // Check if the prefix of uwv matches the prefix in p
+      for (let i = 0; i < Math.min(newDerivation.name.length, input.length); i++) {
+        if (!isTerminalSymbol(newDerivation.name.charAt(i))) break;
+        if (newDerivation.name.charAt(i) !== input.charAt(i)) return;
+      }
+      // Check if we are still within the depth limit
+      if (qLevel >= depth) return;
+      // Add the derivation to the tree and to the queue to continue parsing
+      qSymbol.children.push(newDerivation);
+      queue.push([newDerivation, qLevel + 1,]);
+    });
   }
 
-  if (input == buildString && input != "") {
-    console.log("Accepted");
+  if (input === buildString && input !== '') {
+    console.log('Accepted');
   } else {
-    console.log("Not accepted");
+    console.log('Not accepted');
     // TODO: Show sad message
   }
 
@@ -78,6 +63,3 @@ const parser = (input: string, depth: number) => {
 };
 
 export default parser;
-
-
-//aaabbbba

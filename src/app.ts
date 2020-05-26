@@ -2,12 +2,12 @@ import parser from './parser';
 import { parseFile } from './grammar_parsing';
 import setupInputs from './input_fields';
 import { setupTree } from './parsing_tree';
-import { GrammarStructure, Point, Symbol } from './types';
+import { GrammarStructure, Point, Derivation } from './types';
 
 declare global {
   interface Window {
     grammarStructure: GrammarStructure
-    parsingTree: Symbol
+    parsingTree: Derivation
     oldSourcePoint: Point
   }
 }
@@ -55,56 +55,5 @@ const recievedFile = (file: string) => {
   console.log(file);
   parseFile(file);
   setupInputs(parser);
-  // Add hardcoded tree for d3 tests
-  window.parsingTree = {
-    name: 'S',
-    id: 0,
-    children: [
-      {
-        name: 'A',
-        id: 1,
-        children: [
-          {
-            name: 'a',
-            id: 2,
-          },
-        ],
-      },
-      {
-        name: 'b',
-        id: 3,
-      },
-      {
-        name: 'B',
-        id: 4,
-        children: [
-          {
-            name: 'A',
-            id: 5,
-            children: [
-              {
-                name: 'a',
-                id: 6,
-              },
-            ],
-          },
-          {
-            name: 'a',
-            id: 7,
-          },
-          {
-            name: 'A',
-            id: 8,
-            children: [
-              {
-                name: 'a',
-                id: 9,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
   setupTree();
 };

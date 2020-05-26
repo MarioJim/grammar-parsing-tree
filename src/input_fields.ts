@@ -18,7 +18,7 @@ const setupInputs = (parseInput: parseInputFunction) => {
 
   // Select depthField, reset it and display it
   const depthField = document.getElementById('depthField') as HTMLInputElement;
-  depthField.value = '0';
+  depthField.value = '1';
   depthField.style.display = 'block';
 
   // Add oninput callbacks to clean inputs and parse it
@@ -27,7 +27,7 @@ const setupInputs = (parseInput: parseInputFunction) => {
     parseInput(textField.value, parseInt(depthField.value));
   };
   depthField.oninput = () => {
-    depthField.value = '' + Math.abs(parseInt(depthField.value)) || '0';
+    depthField.value = '' + Math.abs(parseInt(depthField.value)) || '1';
     parseInput(textField.value, parseInt(depthField.value));
   };
 };
