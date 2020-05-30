@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { isTerminalSymbol, Point, Derivation } from './types';
 
-const width = 600, height = 500, margin = 50;
+const width = 800, height = 500, margin = 50;
 const transitionDuration = 700;
 const circleSize = 18;
 

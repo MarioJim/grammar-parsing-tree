@@ -24,13 +24,10 @@ const parser = (input: string, depth: number) => {
     const q = qDerivation.name;
 
     // Search first non terminal symbol
-    let index: number = -1;
-    do {
-      index++;
-    } while (index < q.length && isTerminalSymbol(q.charAt(index)));
+    const index: number = q.split('').findIndex(letter => !isTerminalSymbol(letter));
 
     // if there aren't non terminal symbols continue to the next derivation
-    if (index === q.length) continue;
+    if (index === -1) continue;
 
     window.grammarStructure.nonTerminalSymbols[q.charAt(index)].forEach(production => {
       // Create new derivation with uAv as uwv and add the new derivation to the tree
