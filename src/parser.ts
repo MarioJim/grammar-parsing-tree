@@ -30,6 +30,8 @@ const parser = (input: string, depth: number) => {
     if (index === -1) continue;
 
     window.grammarStructure.nonTerminalSymbols[q.charAt(index)].forEach(production => {
+      // Check if we are still within the depth limit
+      if (qLevel >= depth) return;
       // Create new derivation with uAv as uwv and add the new derivation to the tree
       const newDerivation: Derivation = {
         name: q.replace(q.charAt(index), production),
@@ -47,8 +49,6 @@ const parser = (input: string, depth: number) => {
         if (!isTerminalSymbol(newDerivation.name.charAt(i))) break;
         if (newDerivation.name.charAt(i) !== input.charAt(i)) return;
       }
-      // Check if we are still within the depth limit
-      if (qLevel >= depth) return;
       // Add the derivation to the tree and to the queue to continue parsing
       qDerivation.children.push(newDerivation);
       queue.push([newDerivation, qLevel + 1,]);
