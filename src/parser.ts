@@ -45,8 +45,12 @@ const parser = (input: string, depth: number) => {
         return;
       }
       // Check if the prefix of uwv matches the prefix in p
-      for (let i = 0; i < Math.min(newDerivation.name.length, input.length); i++) {
+      for (let i = 0; i < input.length; i++) {
+        // If the input is longer than the derivation name continue to the next one
+        if (i >= newDerivation.name.length) return;
+        // If the next symbol in the new derivation is a non terminal, prefixes match
         if (!isTerminalSymbol(newDerivation.name.charAt(i))) break;
+        // If the prefix doesn't match, continue to the next derivation
         if (newDerivation.name.charAt(i) !== input.charAt(i)) return;
       }
       // Add the derivation to the tree and to the queue to continue parsing
