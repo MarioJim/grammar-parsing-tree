@@ -1,69 +1,88 @@
 body {
-    height: 100vh;
-    margin: 0;
-    font-family: sans-serif;
-    background-color: gainsboro;
+  height: 100vh;
+  margin: 0;
+  font-family: sans-serif;
+  background-color: gainsboro;
 }
 
 header {
-    width: 100%;
-    height: 8%;
-    background-color: rgb(186, 186, 186);
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
+  width: 100%;
+  height: 8%;
+  background-color: rgb(186, 186, 186);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
-header p, header h2 {
-    margin: 2px;
-    text-align: center;
+header h1 {
+  font-size: 30px;
 }
 
-#title {
-    height: 85%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+header p {
+  margin: 2px;
+  text-align: center;
 }
 
-#page {
-    width: 100%;
-    height: 92%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+#start-page {
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#inputParent {
-    height: 8%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+#start-page * {
+  margin: 5px;
 }
 
-#inputParent > input {
-    text-align: center;
-    font-size: 20px;
-    padding: 0.5%;
-    margin: 0 20px;
+#start-page #buttons {
+  margin-top: 0;
 }
 
-#depthField {
-    width: 100px;
+button {
+  font-size: 1em;
+  padding: 8px 20px;
+}
+
+#tree-page {
+  width: 100%;
+  height: 92%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#input-parent {
+  height: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+#input-parent > input {
+  text-align: center;
+  font-size: 20px;
+  padding: 0.5%;
+  margin: 0 20px 0 10px;
+}
+
+#depth-field {
+  width: 100px;
 }
 
 #message {
-    height: 4%;
-    text-align: center;
+  height: 4%;
+  text-align: center;
 }
 
 #message > * {
-    margin: auto;
+  margin: auto;
 }
 
-#svgPane {
-    width: 100%;
-    height: 85%;
-    user-select: none;
+#svg-pane {
+  width: 100%;
+  height: 85%;
+  user-select: none;
 }
