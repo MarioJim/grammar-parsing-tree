@@ -7,20 +7,25 @@ type parseInputFunction = (input: string, depth: number) => void;
  * the provided parse function.
  */
 const setupInputs = (parseInput: parseInputFunction) => {
-  // Select textField, reset it and display it
-  const textField = document.getElementById('textField') as HTMLInputElement;
-  textField.value = '';
-  // Select depthField, reset it and display it
-  const depthField = document.getElementById('depthField') as HTMLInputElement;
+  // Select string-field, reset it and display it
+  const stringField = document.getElementById(
+    'string-field',
+  ) as HTMLInputElement;
+  stringField.value = '';
+  // Select depth-field, reset it and display it
+  const depthField = document.getElementById('depth-field') as HTMLInputElement;
   depthField.value = '1';
   // Add oninput callbacks to clean inputs and parse it
-  textField.oninput = () => {
-    textField.value = textField.value.split('').filter(char => isTerminalSymbol(char)).join('');
-    parseInput(textField.value, parseInt(depthField.value));
+  stringField.oninput = () => {
+    stringField.value = stringField.value
+      .split('')
+      .filter((char) => isTerminalSymbol(char))
+      .join('');
+    parseInput(stringField.value, parseInt(depthField.value));
   };
   depthField.oninput = () => {
     depthField.value = '' + (Math.abs(parseInt(depthField.value)) || 1);
-    parseInput(textField.value, parseInt(depthField.value));
+    parseInput(stringField.value, parseInt(depthField.value));
   };
 };
 
